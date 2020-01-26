@@ -1,0 +1,53 @@
+version: 2.1
+
+jobs:
+  bumpversion:
+    docker:
+      - image: tnlcommunity/tnl-runner-image:latest
+    steps:
+      - checkout
+      - run:
+          name: Avoid hosts unknown for github
+          command: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+      - run:
+          name: bump version
+          command: |
+            apt-get update
+            apt-get install -y git
+            git config --global user.email "circlecistuff@todandlorna.com"
+            git config --global user.name "Runner"
+            git fetch origin
+            git checkout -B master
+            pip install bumpversion
+            bumpversion patch --verbose  # bumpversion installed in runner
+            git push origin master --tags
+
+  publish_package:
+    docker:
+      - image: tnlcommunity/tnl-runner-image:latest
+    environment:
+      VERSION: 0.1.13
+    steps:
+      - checkout
+      - run:
+          name: publish package
+          command: |
+            poetry publish --build 
+
+workflows:
+  version: 2
+  bumpversion:
+    jobs:
+      - bumpversion:
+          filters:
+            branches:
+              only:
+                - master
+  publish_package:
+    jobs:
+      - publish_package: 
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
