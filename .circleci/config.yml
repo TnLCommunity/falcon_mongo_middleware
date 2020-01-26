@@ -32,7 +32,7 @@ jobs:
       - run:
           name: publish package
           command: |
-            poetry publish --build 
+            poetry publish --build --no-interaction --username "${PYPI_USERNAME}" --password "${PYPI_PASSWORD}"
 
 workflows:
   version: 2
