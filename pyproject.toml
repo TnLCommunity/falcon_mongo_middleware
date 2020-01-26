@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "falcon_mongo_middleware"
-version = "0.1.14"
+version = "0.1.15"
 description = ""
 authors = ["TnL Community <tnlcommunity@todandlorna.com>"]
 
